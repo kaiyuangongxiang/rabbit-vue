@@ -3,6 +3,7 @@ import HomeCategory from './components/HomeCategory.vue'
 import HomeBanner from './components/HomeBanner.vue'
 import HomeNew from './components/HomeNew.vue'
 import HomeHot from './components/HomeHot.vue'
+import HomeProduct from './components/HomeProduct.vue'
 </script>
 
 <template>
@@ -12,6 +13,7 @@ import HomeHot from './components/HomeHot.vue'
   </div>
   <HomeNew />
   <HomeHot />
+  <HomeProduct />
     <!-- 测试组件的复用 -->
   <!-- <homeProduct />
    <home-panel title="新鲜好物" sub-title="新鲜好物,好多商品">
