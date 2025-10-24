@@ -3,8 +3,6 @@ import HomeCategory from './components/HomeCategory.vue'
 import HomeBanner from './components/HomeBanner.vue'
 import HomeNew from './components/HomeNew.vue'
 import HomeHot from './components/HomeHot.vue'
-import homeProduct from './components/HomeProduct.vue'
-import HomePanel from './components/HomePanel.vue'
 </script>
 
 <template>
@@ -14,8 +12,8 @@ import HomePanel from './components/HomePanel.vue'
   </div>
   <HomeNew />
   <HomeHot />
-  <homeProduct />
-  <!-- 测试组件的复用 -->
+    <!-- 测试组件的复用 -->
+  <!-- <homeProduct />
    <home-panel title="新鲜好物" sub-title="新鲜好物,好多商品">
     <div>
       新鲜好物插槽
@@ -26,6 +24,6 @@ import HomePanel from './components/HomePanel.vue'
     <div>
       人气推荐插槽
     </div>
-   </home-panel>
+   </home-panel> -->
 </template>
 
