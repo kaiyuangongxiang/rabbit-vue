@@ -1,40 +1,12 @@
 <script setup>
-import { getCategoryAPI } from "@/api/category";
-import { onMounted, ref } from "vue";
-import { useRoute, onBeforeRouteUpdate } from "vue-router";
-import { getBannerAPI } from "@/api/home";
 import GoodsItem from "../Home/components/GoodsItem.vue";
-const categoryData = ref({});
-const route = useRoute();
-const getCategory = async (id = route.params.id) => {
-  const res = await getCategoryAPI(id);
-  //console.log(res);
-  categoryData.value = res.result;
-};
-onMounted(() => {
-  getCategory();
-});
+import { useBanner } from "./composables/useBanner";
+import { useCategory } from "./composables/useCategory";
 
-//目标：路由参数变化的时候重新请求接口数据4
-onBeforeRouteUpdate((to) => {
-  console.log("路由变化了");
-  //通过to目标路由对象获取路由参数
-  //console.log(to);
-  getCategory(to.params.id);
-});
-
-const bannerList = ref([]);
-const getBanner = async () => {
-  const res = await getBannerAPI({
-    distributionSite: "2",
-  });
-  console.log(res);
-  bannerList.value = res.result;
-};
-
-onMounted(() => {
-  getBanner();
-});
+//解构赋值：用于从数组或对象中提取值，
+//并将其赋值给对应的变量
+const { categoryData } = useCategory();
+const { bannerList } = useBanner();
 </script>
 
 <template>
@@ -63,7 +35,7 @@ onMounted(() => {
         <h3>全部分类</h3>
         <ul>
           <li v-for="i in categoryData.children" :key="i.id">
-            <RouterLink to="/">
+            <RouterLink :to="`/category/sub/${i.id}`">
               <img :src="i.picture" />
               <p>{{ i.name }}</p>
             </RouterLink>
