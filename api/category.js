@@ -1,6 +1,6 @@
 import http from "@/utils/http";
 /**
- *@description: 获取二]一级分类列表数据
+ *@description: 获取一级分类列表数据
  *@param {*} id 分类id
  *@return {*}
  */
