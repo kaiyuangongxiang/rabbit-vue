@@ -1,32 +1,58 @@
 import { defineStore } from "pinia";
 import { computed, ref } from "vue";
+import { userStore } from "./user";
+import { findNewCartListAPI, insertCartAPI, delCartAPI } from "@/api/cart";
 
 export const useCartStore = defineStore(
   "cart",
   () => {
+    const myStore = userStore();
+    const isLogin = computed(() => myStore.userInfo.token);
+
     //1.定义cartList
     const cartList = ref([]);
+    // const updateNewList = async () => {
+    //   const res = await findNewCartListAPI();
+    //   cartList.value = res.result;
+    // };
     //2.定义action -addCart
     const addCart = async (goods) => {
-      //添加购物车操作
-      //已经添加 count+1
-      //没有添加 直接push
-      const item = cartList.value.find((item) => goods.skuId == item.skuId);
-      if (item) {
-        item.count++;
+      if (isLogin.value) {
+        //添加接口购物车
+        const { skuId, count } = goods;
+        await insertCartAPI(skuId, count);
+        const res = await findNewCartListAPI();
+        console.log(res);
+
+        //cartList.value = res.result;
       } else {
-        cartList.value.push(goods);
+        //添加本地购物车操作
+        //已经添加 count+1
+        //没有添加 直接push
+        const item = cartList.value.find((item) => goods.skuId == item.skuId);
+        if (item) {
+          item.count++;
+        } else {
+          cartList.value.push(goods);
+        }
       }
     };
     const delCart = async (skuId) => {
-      //1.找到要删除的下标
-      //2.使用数组过滤的方法
-      const idx = cartList.value.findIndex((item) => skuId === item.skuId);
-      cartList.value.splice(idx, 1);
+      if (isLogin.value) {
+        await delCartAPI([skuId]);
+        const res = await findNewCartListAPI();
+        console.log(res);
+        //cartList.value = res.result;
+      } else {
+        //1.找到要删除的下标
+        //2.使用数组过滤的方法
+        const idx = cartList.value.findIndex((item) => skuId === item.skuId);
+        cartList.value.splice(idx, 1);
+      }
     };
     //清空购物车
     const clearCart = () => {
-      cartList.value = {};
+      cartList.value = [];
     };
     //计算属性
     //1.总的数量
@@ -53,13 +79,13 @@ export const useCartStore = defineStore(
     const selectedCount = computed(() =>
       cartList.value
         .filter((item) => item.selected)
-        .reduce((a, c) => a + c.count,0)
+        .reduce((a, c) => a + c.count, 0)
     );
     //已选择商品价钱合计
     const selectedPrice = computed(() =>
       cartList.value
         .filter((item) => item.selected)
-        .reduce((a, c) => a + c.count * c.price,0)
+        .reduce((a, c) => a + c.count * c.price, 0)
     );
 
     return {
