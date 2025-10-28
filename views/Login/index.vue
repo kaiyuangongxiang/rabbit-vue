@@ -1,5 +1,58 @@
 <script setup>
+import { ref } from "vue";
+import { ElMessage } from "element-plus";
+import "element-plus/theme-chalk/el-message.css";
+import { useRouter } from "vue-router";
+import { userStore } from "@/stores/user";
+//1.准备表单对象
+const form = ref({
+  account: "",
+  password: "",
+  agree: true,
+});
 
+//2.校验规则
+const rules = {
+  account: [{ required: true, message: "用户名不能为空", tigger: "blur" }],
+  password: [
+    { required: true, message: "密码不能为空", tigger: "blur" },
+    { min: 6, max: 14, message: "密码长度要求6-14个字符", tigger: "blur" },
+  ],
+  agree: [
+    {
+      validator: (rule, value, callBack) => {
+        //自定义校验逻辑
+        if (value) {
+          callBack();
+        } else {
+          callBack(new Error("请勾选协议"));
+        }
+      },
+    },
+  ],
+};
+//3. 获取form实例统一校验
+const formRef = ref(null);
+const router = useRouter();
+const doLogin = () => {
+  //调用实例方法
+  const { account, password } = form.value;
+  //调用实例方法
+  formRef.value.validate(async (valid) => {
+    //如果所有表单校验都通过 才为true
+    //console.log(valid);
+    if (valid) {
+      //LOGIN
+      const myStore = userStore();
+      myStore.getUserInfo({ account, password });
+      //await loginAPI({ account, password });
+      //1.提示用户
+      ElMessage({ type: "success", message: "登录成功" });
+      //2.跳转首页
+      router.replace({ path: "/" });
+    }
+  });
+};
 </script>
 
 <template>
@@ -23,20 +76,28 @@
         </nav>
         <div class="account-box">
           <div class="form">
-            <el-form label-position="right" label-width="60px"
-              status-icon>
-              <el-form-item  label="账户">
-                <el-input/>
+            <el-form
+              ref="formRef"
+              label-position="right"
+              :model="form"
+              :rules="rules"
+              label-width="60px"
+              status-icon
+            >
+              <el-form-item prop="account" label="账户">
+                <el-input v-model="form.account" />
               </el-form-item>
-              <el-form-item label="密码">
-                <el-input/>
+              <el-form-item prop="password" label="密码">
+                <el-input v-model="form.password" />
               </el-form-item>
-              <el-form-item label-width="22px">
-                <el-checkbox  size="large">
+              <el-form-item prop="agree" label-width="22px">
+                <el-checkbox size="large" v-model="form.agree">
                   我已同意隐私条款和服务条款
                 </el-checkbox>
               </el-form-item>
-              <el-button size="large" class="subBtn">点击登录</el-button>
+              <el-button size="large" class="subBtn" @click="doLogin"
+                >点击登录</el-button
+              >
             </el-form>
           </div>
         </div>
@@ -60,7 +121,7 @@
   </div>
 </template>
 
-<style scoped lang='scss'>
+<style scoped lang="scss">
 .login-header {
   background: #fff;
   border-bottom: 1px solid #e4e4e4;
@@ -79,7 +140,8 @@
       height: 132px;
       width: 100%;
       text-indent: -9999px;
-      background: url("@/assets/images/logo.png") no-repeat center 18px / contain;
+      background: url("@/assets/images/logo.png") no-repeat center 18px /
+        contain;
     }
   }
 
@@ -106,7 +168,7 @@
 }
 
 .login-section {
-  background: url('@/assets/images/login-bg.png') no-repeat center / cover;
+  background: url("@/assets/images/login-bg.png") no-repeat center / cover;
   height: 488px;
   position: relative;
 
@@ -156,7 +218,7 @@
       color: #999;
       display: inline-block;
 
-      ~a {
+      ~ a {
         border-left: 1px solid #ccc;
       }
     }
@@ -187,7 +249,7 @@
         position: relative;
         height: 36px;
 
-        >i {
+        > i {
           width: 34px;
           height: 34px;
           background: #cfcdcd;
@@ -232,7 +294,7 @@
         }
       }
 
-      >.error {
+      > .error {
         position: absolute;
         font-size: 12px;
         line-height: 28px;
