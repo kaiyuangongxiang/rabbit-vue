@@ -4,8 +4,9 @@ import Home from "@/views/Home/index.vue";
 import Category from "@/views/Category/index.vue";
 import { createRouter, createWebHistory } from "vue-router";
 import SubCategory from "@/views//SubCategory/index.vue";
-import Datail from "@/views/Detail/index.vue"
-import CartList from "@/views/cartList/index.vue"
+import Datail from "@/views/Detail/index.vue";
+import CartList from "@/views/CartList/index.vue";
+import CheckOut from "@/views/CheckOut/index.vue";
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
@@ -31,8 +32,12 @@ const router = createRouter({
           component: Datail,
         },
         {
-          path:'cartList',
+          path: "cartList",
           component: CartList,
+        },
+        {
+          path: "checkout",
+          component: CheckOut,
         },
       ],
     },

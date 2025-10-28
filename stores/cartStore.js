@@ -11,10 +11,10 @@ export const useCartStore = defineStore(
 
     //1.定义cartList
     const cartList = ref([]);
-    // const updateNewList = async () => {
-    //   const res = await findNewCartListAPI();
-    //   cartList.value = res.result;
-    // };
+    const updateNewList = async () => {
+      const res = await findNewCartListAPI();
+      cartList.value = res.result;
+    };
     //2.定义action -addCart
     const addCart = async (goods) => {
       if (isLogin.value) {
@@ -22,8 +22,8 @@ export const useCartStore = defineStore(
         const { skuId, count } = goods;
         await insertCartAPI(skuId, count);
         const res = await findNewCartListAPI();
-        console.log(res);
-
+        //console.log(res);
+        updateNewList();
         //cartList.value = res.result;
       } else {
         //添加本地购物车操作
@@ -41,8 +41,8 @@ export const useCartStore = defineStore(
       if (isLogin.value) {
         await delCartAPI([skuId]);
         const res = await findNewCartListAPI();
-        console.log(res);
-        //cartList.value = res.result;
+        //console.log(res);
+        cartList.value = res.result;
       } else {
         //1.找到要删除的下标
         //2.使用数组过滤的方法
@@ -100,6 +100,7 @@ export const useCartStore = defineStore(
       isAll,
       selectedCount,
       selectedPrice,
+      updateNewList,
     };
   },
   {
