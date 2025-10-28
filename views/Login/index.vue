@@ -1,15 +1,20 @@
 <script setup>
-import { ref } from "vue";
+import { onMounted, ref } from "vue";
 import { ElMessage } from "element-plus";
 import "element-plus/theme-chalk/el-message.css";
 import { useRouter } from "vue-router";
 import { userStore } from "@/stores/user";
-import {loginAPI} from "@/api/user"
+import { loginAPI } from "@/api/user";
 //1.准备表单对象
 const form = ref({
   account: "",
   password: "",
   agree: true,
+});
+
+const defaultForm = ref({
+  account: "heima282",
+  password: "hm#qd@23!",
 });
 
 //2.校验规则
@@ -54,6 +59,14 @@ const doLogin = () => {
     }
   });
 };
+//自动填充
+const fillForm = () => {
+  form.value.account = defaultForm.value.account;
+  form.value.password = defaultForm.value.password;
+};
+onMounted(() => {
+  fillForm();
+});
 </script>
 
 <template>

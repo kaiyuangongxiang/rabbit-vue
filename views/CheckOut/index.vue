@@ -1,6 +1,8 @@
 <script setup>
 import { ref, onMounted } from "vue";
-import { getCheckInfoAPI } from "@/api/checkout";
+import { getCheckInfoAPI, createOrderAPI } from "@/api/checkout";
+import { useRouter } from "vue-router";
+import { useCartStore } from "@/stores/cartStore";
 const checkInfo = ref({}); // 订单对象
 const curAddress = ref({}); // 地址对象
 const showDialog = ref(false); //弹窗开关
@@ -28,6 +30,32 @@ const switchAddress = (item) => {
 const confirm = () => {
   curAddress.value = activeAddress.value;
   showDialog.value = false;
+};
+//创建订单
+const cartStore = useCartStore();
+const router = useRouter();
+const createOrder = async () => {
+  const res = await createOrderAPI({
+    deliveryTimeType: 1,
+    payType: 1,
+    payChannel: 1,
+    buyerMessage: "",
+    goods: checkInfo.value.goods.map((item) => {
+      return {
+        skuId: item.skuId,
+        count: item.count,
+      };
+    }),
+    addressId: curAddress.value.id,
+  });
+  const orderId = res.result.id;
+  router.push({
+    path: "/pay",
+    query: {
+      id: orderId,
+    },
+  });
+  cartStore.updateNewList();
 };
 </script>
 
@@ -136,7 +164,9 @@ const confirm = () => {
         </div>
         <!-- 提交订单 -->
         <div class="submit">
-          <el-button type="primary" size="large">提交订单</el-button>
+          <el-button @click="createOrder" type="primary" size="large"
+            >提交订单</el-button
+          >
         </div>
       </div>
     </div>
@@ -371,17 +401,15 @@ const confirm = () => {
     cursor: pointer;
 
     &.active,
-    // &:hover {
-    //   border-color: $xtxColor;
-
-    //   //废弃： background: lighten($xtxColor, 50%);
-
-    // }
     &:hover {
       border-color: $xtxColor;
-      // 替换废弃的 lighten()，使用等值的 color.adjust()
-       background: adjust-color($xtxColor, $lightness: 50%);
+      background: lighten($xtxColor, 50%);
     }
+    // &:hover {
+    //   border-color: $xtxColor;
+    //   // 替换废弃的 lighten()，使用等值的 color.adjust()
+    //    background: adjust-color($xtxColor, $lightness: 50%);
+    // }
 
     > ul {
       padding: 10px;
