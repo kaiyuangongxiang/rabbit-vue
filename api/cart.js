@@ -1,7 +1,7 @@
 import http from "@/utils/http";
 
 //加入购物车
-export const insertCartAPI = (skuId, count) => {
+export const insertCartAPI = ({skuId, count}) => {
   return http({
     url: "/member/cart",
     method: "POST",

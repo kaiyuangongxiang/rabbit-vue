@@ -20,11 +20,11 @@ export const useCartStore = defineStore(
       if (isLogin.value) {
         //添加接口购物车
         const { skuId, count } = goods;
-        await insertCartAPI(skuId, count);
+        await insertCartAPI({skuId, count});
         const res = await findNewCartListAPI();
-        //console.log(res);
-        updateNewList();
-        //cartList.value = res.result;
+        cartList.value = res.result;
+        //updateNewList();
+
       } else {
         //添加本地购物车操作
         //已经添加 count+1
